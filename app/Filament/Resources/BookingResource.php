@@ -17,11 +17,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TimePicker;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Validation\ValidationException;
 use App\Filament\Resources\BookingResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\BookingResource\RelationManagers;
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class BookingResource extends Resource
 {
@@ -144,5 +141,17 @@ class BookingResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
+    }
+
+    protected function getEvents(): array
+    {
+        return Booking::all()->map(function ($booking) {
+            return [
+                'id' => $booking->id,
+                'title' => $booking->title,
+                'start' => $booking->start->toIso8601String(),
+                'end' => $booking->end->toIso8601String(),
+            ];
+        })->toArray();
     }
 }
